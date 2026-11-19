@@ -4934,12 +4934,29 @@ public class Character extends AbstractCharacterObject {
         return YamlConfig.config.server.USE_ENFORCE_NOVICE_EXPRATE && isBeginnerJob() && level < 11;
     }
 
+    private int getLevelExpRateMultiplier() {
+        if (level <= 10) {
+            return 5;
+        }
+        if (level <= 30) {
+            return 8;
+        }
+
+        // Scale rewards in proportion to the level's EXP requirement. This keeps
+        // the number of similar-level monsters per level roughly constant after 30.
+        long levelRequirement = ExpTable.getExpNeededForLevel(level);
+        long levelThirtyRequirement = ExpTable.getExpNeededForLevel(30);
+        return (int) Math.ceil(8.0 * levelRequirement / levelThirtyRequirement);
+    }
+
     public int getExpRate() {
         if (hasNoviceExpRate()) {   // base exp rate 1x for early levels idea thanks to Vcoc
             return 1;
         }
 
-        return expRate;
+        int levelBonusRate = GameConstants.getPlayerBonusExpRate(level / 20);
+        long baseRate = expRate / levelBonusRate;
+        return (int) Math.min(Integer.MAX_VALUE, baseRate * getLevelExpRateMultiplier());
     }
 
     public int getCouponExpRate() {
@@ -4985,7 +5002,7 @@ public class Character extends AbstractCharacterObject {
         }
 
         World w = getWorldServer();
-        return w.getExpRate() * w.getQuestRate();
+        return w.getExpRate() * w.getQuestRate() * getLevelExpRateMultiplier();
     }
 
     public int getQuestMesoRate() {

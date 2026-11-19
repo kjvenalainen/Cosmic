@@ -21,9 +21,12 @@
 */
 package net.server.channel.handlers;
 
+import client.Character;
 import client.Client;
+import config.YamlConfig;
 import net.AbstractPacketHandler;
 import net.packet.InPacket;
+import server.CashShop;
 import tools.PacketCreator;
 
 /**
@@ -32,6 +35,22 @@ import tools.PacketCreator;
 public final class TouchingCashShopHandler extends AbstractPacketHandler {
     @Override
     public final void handlePacket(InPacket p, Client c) {
-        c.sendPacket(PacketCreator.showCash(c.getPlayer()));
+        Character player = c.getPlayer();
+        boolean chargeRequest = p.available() == 1 && p.readUnsignedByte() == 1;
+        CashShop cashShop = player.getCashShop();
+        int freeNxCreditPerClick = YamlConfig.config.server.FREE_NX_CREDIT_PER_CLICK;
+
+        if (chargeRequest && cashShop.isOpened() && freeNxCreditPerClick > 0) {
+            int balance = cashShop.getCash(CashShop.NX_CREDIT);
+            if (balance <= Integer.MAX_VALUE - freeNxCreditPerClick) {
+                cashShop.gainCash(CashShop.NX_CREDIT, freeNxCreditPerClick);
+                player.saveCharToDB(true);
+                c.sendPacket(PacketCreator.serverNotice(5, "NX Credit added."));
+            } else {
+                c.sendPacket(PacketCreator.serverNotice(5, "NX Credit balance limit reached."));
+            }
+        }
+
+        c.sendPacket(PacketCreator.showCash(player));
     }
 }
