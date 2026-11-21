@@ -53,5 +53,11 @@
     <changeSet id="162" author="Ponk">
         <sqlFile path="db/data/162-throwing-star-shop-data.sql"/>
     </changeSet>
+    <changeSet id="163" author="Codex">
+        <sqlFile path="db/data/163-kerning-claw-shop-data.sql"/>
+    </changeSet>
+    <changeSet id="164" author="Codex">
+        <sqlFile path="db/data/164-class-town-equipment-data.sql"/>
+    </changeSet>
 
 </databaseChangeLog>
