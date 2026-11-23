@@ -59,5 +59,8 @@
     <changeSet id="164" author="Codex">
         <sqlFile path="db/data/164-class-town-equipment-data.sql"/>
     </changeSet>
+    <changeSet id="165" author="Codex">
+        <sqlFile path="db/data/165-class-town-base-weapons-data.sql"/>
+    </changeSet>
 
 </databaseChangeLog>

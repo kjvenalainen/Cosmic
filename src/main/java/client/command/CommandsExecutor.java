@@ -46,6 +46,7 @@ import client.command.commands.gm0.StatDexCommand;
 import client.command.commands.gm0.StatIntCommand;
 import client.command.commands.gm0.StatLukCommand;
 import client.command.commands.gm0.StatStrCommand;
+import client.command.commands.gm0.TeleportToNpcForQuestCompletionCommand;
 import client.command.commands.gm0.TimeCommand;
 import client.command.commands.gm0.ToggleExpCommand;
 import client.command.commands.gm0.UptimeCommand;
@@ -367,6 +368,7 @@ public class CommandsExecutor {
         addCommand("mylawn", MapOwnerClaimCommand.class);
         addCommand("bosshp", BossHpCommand.class);
         addCommand("mobhp", MobHpCommand.class);
+        addCommand("teleportToNpcForQuestCompletion", TeleportToNpcForQuestCompletionCommand.class);
 
         commandsNameDesc.add(levelCommandsCursor);
     }
