@@ -4954,8 +4954,11 @@ public class Character extends AbstractCharacterObject {
             return 1;
         }
 
-        int levelBonusRate = GameConstants.getPlayerBonusExpRate(level / 20);
-        long baseRate = expRate / levelBonusRate;
+        long baseRate = expRate;
+        if (YamlConfig.config.server.USE_ADD_RATES_BY_LEVEL) {
+            int levelBonusRate = GameConstants.getPlayerBonusExpRate(level / 20);
+            baseRate /= levelBonusRate;
+        }
         return (int) Math.min(Integer.MAX_VALUE, baseRate * getLevelExpRateMultiplier());
     }
 
