@@ -273,6 +273,7 @@ public class Character extends AbstractCharacterObject {
     private CashShop cashshop;
     private final Set<NewYearCardRecord> newyears = new LinkedHashSet<>();
     private final SavedLocation[] savedLocations;
+    private final Set<Integer> visitedTownMapIds = ConcurrentHashMap.newKeySet();
     private final SkillMacro[] skillMacros = new SkillMacro[5];
     private List<Integer> lastmonthfameids;
     private final List<WeakReference<MapleMap>> lastVisitedMaps = new LinkedList<>();
@@ -1693,6 +1694,8 @@ public class Character extends AbstractCharacterObject {
     }
 
     public void visitMap(MapleMap map) {
+        boolean newTownVisit = map.isTown() && visitedTownMapIds.add(map.getId());
+
         petLock.lock();
         try {
             int idx = getVisitedMapIndex(map);
@@ -1701,16 +1704,29 @@ public class Character extends AbstractCharacterObject {
                 if (lastVisitedMaps.size() == YamlConfig.config.server.MAP_VISITED_SIZE) {
                     lastVisitedMaps.remove(0);
                 }
+                lastVisitedMaps.add(new WeakReference<>(map));
             } else {
                 WeakReference<MapleMap> mapRef = lastVisitedMaps.remove(idx);
                 lastVisitedMaps.add(mapRef);
-                return;
             }
-
-            lastVisitedMaps.add(new WeakReference<>(map));
         } finally {
             petLock.unlock();
         }
+
+        if (newTownVisit) {
+            try (Connection con = DatabaseConnection.getConnection();
+                 PreparedStatement ps = con.prepareStatement("INSERT IGNORE INTO charactertownvisits (characterid, mapid) VALUES (?, ?)")) {
+                ps.setInt(1, id);
+                ps.setInt(2, map.getId());
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                log.error("Failed to save visited town {} for character {}", map.getId(), id, e);
+            }
+        }
+    }
+
+    public List<Integer> getVisitedTownMapIds() {
+        return new ArrayList<>(visitedTownMapIds);
     }
 
     public void setOwnedMap(MapleMap map) {
@@ -7084,6 +7100,17 @@ public class Character extends AbstractCharacterObject {
                     while (reg < 5) {
                         ret.trockmaps.add(MapId.NONE);
                         reg++;
+                    }
+                }
+            }
+
+            // Towns visited by this character
+            try (PreparedStatement ps = con.prepareStatement("SELECT mapid FROM charactertownvisits WHERE characterid = ?")) {
+                ps.setInt(1, charid);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        ret.visitedTownMapIds.add(rs.getInt("mapid"));
                     }
                 }
             }

@@ -48,6 +48,7 @@ import client.command.commands.gm0.StatLukCommand;
 import client.command.commands.gm0.StatStrCommand;
 import client.command.commands.gm0.TeleportToNpcForQuestCompletionCommand;
 import client.command.commands.gm0.TimeCommand;
+import client.command.commands.gm0.TownCommand;
 import client.command.commands.gm0.ToggleExpCommand;
 import client.command.commands.gm0.UptimeCommand;
 import client.command.commands.gm1.BossHpCommand;
@@ -344,6 +345,7 @@ public class CommandsExecutor {
         addCommand(new String[]{"help", "commands"}, HelpCommand.class);
         addCommand("droplimit", DropLimitCommand.class);
         addCommand("time", TimeCommand.class);
+        addCommand(new String[]{"town", "towns"}, TownCommand.class);
         addCommand("credits", StaffCommand.class);
         addCommand("uptime", UptimeCommand.class);
         addCommand("gacha", GachaCommand.class);
