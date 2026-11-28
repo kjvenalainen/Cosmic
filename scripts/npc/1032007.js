@@ -2,7 +2,7 @@ var status = 0;
 var cost = 5000;
 
 function start() {
-    cm.sendYesNo("Hello, I'm in charge of selling tickets for the ship ride to Orbis Station of Ossyria. The ride to Orbis takes off every 15 minutes, beginning on the hour, and it'll cost you #b" + cost + " mesos#k. Are you sure you want to purchase #b#t4031045##k?");
+    cm.sendYesNo("Hello, I'm in charge of selling tickets for the ship ride to Orbis Station of Ossyria. The ship departs one minute after the first passenger boards, and a ticket costs #b" + cost + " mesos#k. Are you sure you want to purchase #b#t4031045##k?");
 }
 
 function action(mode, type, selection) {

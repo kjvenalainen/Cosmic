@@ -273,6 +273,16 @@ public class EventManager {
         return props.getProperty(key);
     }
 
+    public boolean compareAndSetProperty(String key, String expected, String value) {
+        synchronized (props) {
+            if (!java.util.Objects.equals(props.getProperty(key), expected)) {
+                return false;
+            }
+            props.setProperty(key, value);
+            return true;
+        }
+    }
+
     public int getIntProperty(String key) {
         return Integer.parseInt(props.getProperty(key));
     }

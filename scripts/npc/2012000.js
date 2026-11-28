@@ -20,7 +20,8 @@ function action(mode, type, selection) {
         status++;
         if (status == 1) {
             select = selection;
-            cm.sendYesNo("The ride to " + mapName2[select] + " takes off every " + (select == 0 ? 15 : 10) + " minutes, beginning on the hour, and it'll cost you #b" + cost[select] + " mesos#k. Are you sure you want to purchase #b#t" + ticket[select] + "##k?");
+            var departure = select == 0 ? "departs one minute after the first passenger boards" : "takes off every 10 minutes, beginning on the hour";
+            cm.sendYesNo("The ride to " + mapName2[select] + " " + departure + ", and it'll cost you #b" + cost[select] + " mesos#k. Are you sure you want to purchase #b#t" + ticket[select] + "##k?");
         } else if (status == 2) {
             if (cm.getMeso() < cost[select] || !cm.canHold(ticket[select])) {
                 cm.sendOk("Are you sure you have #b" + cost[select] + " mesos#k? If so, then I urge you to check you etc. inventory, and see if it's full or not.");

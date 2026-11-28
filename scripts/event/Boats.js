@@ -7,16 +7,12 @@ var Ellinia_Boat_Cabin;
 var Ellinia_docked;
 
 //Time Setting is in millisecond
-var closeTime = 4 * 60 * 1000; //The time to close the gate
-var beginTime = 5 * 60 * 1000; //The time to begin the ride
 var rideTime = 10 * 60 * 1000; //The time that require move to destination
 var invasionStartTime = 3 * 60 * 1000; //The time to balrog ship approach
 var invasionDelayTime = 1 * 60 * 1000; //The time to balrog ship approach
 var invasionDelay = 5 * 1000; //The time that spawn balrog
 
 function init() {
-    closeTime = em.getTransportationTime(closeTime);
-    beginTime = em.getTransportationTime(beginTime);
     rideTime = em.getTransportationTime(rideTime);
     invasionStartTime = em.getTransportationTime(invasionStartTime);
     invasionDelayTime = em.getTransportationTime(invasionDelayTime);
@@ -42,8 +38,7 @@ function scheduleNew() {
 
     em.setProperty("entry", "true");
     em.setProperty("haveBalrog", "false");
-    em.schedule("stopentry", closeTime);
-    em.schedule("takeoff", beginTime);
+    em.setProperty("countdownStarted", "false");
 }
 
 function stopentry() {
@@ -53,12 +48,12 @@ function stopentry() {
 }
 
 function takeoff() {
+    stopentry();
+    em.setProperty("docked", "false");
     Orbis_btf.warpEveryone(Boat_to_Ellinia.getId());
     Ellinia_btf.warpEveryone(Boat_to_Orbis.getId());
     Ellinia_docked.broadcastShip(false);
     Orbis_docked.broadcastShip(false);
-
-    em.setProperty("docked", "false");
 
     if (Math.random() < 0.42) {
         em.schedule("approach", (invasionStartTime + Math.trunc((Math.random() * invasionDelayTime))));

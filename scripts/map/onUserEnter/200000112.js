@@ -7,5 +7,7 @@ function start(ms) {
     //is the player late to start the travel?
     if (em.getProperty("docked") == "false") {
         ms.getClient().getPlayer().warpAhead(toMap);
+    } else if (em.compareAndSetProperty("countdownStarted", "false", "true")) {
+        em.schedule("takeoff", 60 * 1000);
     }
 }
